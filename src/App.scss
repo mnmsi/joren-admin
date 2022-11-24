@@ -1,0 +1,32 @@
+.card-text-content{
+  text-align: left;
+}
+
+
+.card {
+  height: 100%;
+  cursor: pointer;
+  img{
+    height: 250px;
+    object-fit: cover;
+
+  }
+  .date{
+    font-weight: bold;
+  }
+}
+.details_btn {
+  svg {
+    margin-right: 10px;
+  }
+}
+
+.details_title{
+  flex: 0 0 88%;
+}
+
+.card-title.h5 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
