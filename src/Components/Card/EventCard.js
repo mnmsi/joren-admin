@@ -3,10 +3,10 @@ import {Card} from "react-bootstrap";
 import defaultImage from "../../Assets/Images/default-image.jpg";
 import mapIcon from "../../Assets/Images/mapIcon.png";
 
-const EventCard = ({title,location, banner, start_date,end_date}) => {
+const EventCard = ({title,location, handleClick, banner, start_date,end_date}) => {
     return (
-        <div>
-            <Card style={{ width: "100%" }}>
+        <>
+            <Card style={{ width: "100%" }} onClick={handleClick}>
                 <Card.Img variant="top" src={banner ? banner : defaultImage} />
                 <Card.Body>
                     <Card.Title>{title}</Card.Title>
@@ -20,7 +20,7 @@ const EventCard = ({title,location, banner, start_date,end_date}) => {
                     </div>
                 </Card.Body>
             </Card>
-        </div>
+        </>
     );
 };
 

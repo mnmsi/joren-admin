@@ -4,13 +4,14 @@ import Carousel from 'react-bootstrap/Carousel';
 import defaultImage from "../../Assets/Images/default-image.jpg"
 import {useNavigate} from "react-router";
 import axios from "axios";
+
 const EventDetails = () => {
     const {state} = useLocation()
     const navigate = useNavigate()
     let data = state[0];
     let renderImage = null;
-    if (data.images) {
-        renderImage = data?.images?.map((item, index) => {
+    if (data.banner) {
+        renderImage = data?.banner?.map((item, index) => {
             return (
                 <Carousel.Item key={index}>
                     <img
@@ -25,18 +26,18 @@ const EventDetails = () => {
         })
     }
     let renderImageBlock = null;
-    if (data?.images?.length > 1) {
+    if (data?.banner?.length > 1) {
         renderImageBlock = <>
             <Carousel>
                 {renderImage}
             </Carousel>
         </>
-    } else if (data?.images?.length === 1) {
+    } else if (data?.banner?.length === 1) {
         renderImageBlock = <img
             height={400}
             style={{objectFit: "cover"}}
             className="d-block w-100"
-            src={data?.images[0]}
+            src={data?.banner[0]}
             alt="image"
         />
     } else {
@@ -52,24 +53,24 @@ const EventDetails = () => {
     const handleDelete = () => {
         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdlb3NjaWVuY2Uub3JnIiwicm9sZV9pZCI6MSwibmFtZSI6IkFkbWluIiwiaWF0IjoxNjY5MjYyMjQzfQ.3yHmwnI0yJZtC9fEKLhpPxYDqArOF1GGw_Ig0gL8ex4"
         const config = {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: {Authorization: `Bearer ${token}`}
         };
 
         const bodyParameters = {
             id: data?.id
         };
-        axios.post(process.env.REACT_APP_API_URL+"/api/admin/news/remove",bodyParameters,config).then((res)=>{
-           if(res.data.status === 200){
-               navigate("/news")
-           }
+        axios.post(process.env.REACT_APP_API_URL + "/api/admin/event/remove", bodyParameters, config).then((res) => {
+            if (res.data.status === 200) {
+                navigate("/news")
+            }
         });
     }
 
     //handleDelete
 
     const handleEdit = () => {
-        navigate("/news/edit/",{
-            state:data,
+        navigate("/event/edit/", {
+            state: data,
         })
     }
 
@@ -80,11 +81,12 @@ const EventDetails = () => {
                     {/*category and create delete options*/}
                     <div className={` mb-4 d-flex justify-content-between align-items-center`}>
                         <div className={`d-flex gap-2`}>
-                            <div className={`btn btn-success`} style={{cursor: "auto"}}>{data?.news_type?.title ? data?.news_type?.title : "Global"}</div>
-                            <div className={`btn btn-success`} style={{cursor: "auto"}}>{data?.category?.title}</div>
+                            <div className={`btn btn-success`} style={{cursor: "auto"}}>  {data.start_date}</div>
+                            <div className={`btn btn-danger`} style={{cursor: "auto"}}> {data?.end_date}</div>
                         </div>
                         <div className={`d-flex gap-2`}>
-                            <button onClick={handleEdit}  type="button" className="btn btn-outline-primary details_btn" id="edit-btn">
+                            <button onClick={handleEdit} type="button" className="btn btn-outline-primary details_btn"
+                                    id="edit-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                      className="bi bi-pen" viewBox="0 0 16 16">
                                     <path
@@ -92,8 +94,9 @@ const EventDetails = () => {
                                 </svg>
                                 Edit
                             </button>
-                            <button onClick={handleDelete} type="button" className="btn btn-outline-danger details_btn" id="delete-btn">
-                                <svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            <button onClick={handleDelete} type="button" className="btn btn-outline-danger details_btn"
+                                    id="delete-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                      className="bi bi-trash" viewBox="0 0 16 16">
                                     <path
                                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
@@ -107,11 +110,34 @@ const EventDetails = () => {
                     {renderImageBlock}
                     {/*    date and title */}
                     <div className={` my-4 d-flex justify-content-between align-items-center`}>
-                        <h2 className={`fw-bold details_title`}>{data.title}</h2>
+                        <h2 className={`fw-bold details_title text-center`}>Who Should Attend</h2>
                     </div>
-                    <div className={`fw-bold text-secondary mb-4`}>{new Date(data?.createdAt).toDateString()}</div>
+                    <ul className={``}>
+                        {data.target_audience?.map((item, index) => {
+                            return (
+                                <li className={`mb-2`} key={index}>{item}</li>
+                            )
+                        })}
+                    </ul>
+                    <div className={` my-4 mt-5 d-flex justify-content-between align-items-center`}>
+                        <h2 className={`fw-bold details_title text-center`}>Who Should Attend</h2>
+                    </div>
+                    <ul className={``}>
+                        {data.notes?.map((item, index) => {
+                            return (
+                                <li className={`mb-2`} key={index}>{item}</li>
+                            )
+                        })}
+                    </ul>
                     {/* news content */}
-                    <div dangerouslySetInnerHTML={{__html: data?.content}}/>
+                    {/*<div dangerouslySetInnerHTML={{__html: data?.content}}/>*/}
+                    <div className={`contact-details`}>
+                        <h2>Contact Details</h2>
+                        <ul className="list-group">
+                            <li className="list-group-item">Email : {data.email}</li>
+                            <li className="list-group-item">Phone : {data.phone}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

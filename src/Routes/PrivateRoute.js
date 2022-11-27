@@ -12,6 +12,7 @@ const PrivateRoute = () => {
     return (
         <Routes>
             {/*News*/}
+            <Route path="/" element={<NewsIndex/>}/>
             <Route path="/news" element={<NewsIndex/>}/>
             <Route path="/news/create" element={<NewsCreate/>}/>
             <Route path="/news/details" element={<NewsDetails/>}/>

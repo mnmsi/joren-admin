@@ -5,56 +5,38 @@ import {useForm, Controller} from "react-hook-form";
 import Select from "../../Components/UI/Select";
 import {useNavigate} from "react-router";
 import {useLocation} from "react-router";
-
+import moment from "moment";
 const EditEvent = () => {
     const navigate = useNavigate()
     const {state} = useLocation()
     const {handleSubmit, reset, setValue, setError, control, formState: {errors}, register} = useForm({mode: "all"});
     //category
-    const [category, setCategory] = useState([])
-    const [oldImages, setOldImages] = useState(state.images);
-
+    const [oldImages, setOldImages] = useState(state.banner);
 
     //set default value
-
+    let start_date = moment(new Date(state.start_date)).format('YYYY-MM-DD')
+    let end_date = moment(new Date(state.end_date)).format('YYYY-MM-DD')
+    let check_end_date = moment(end_date)
+    let check_start_date = moment(start_date)
+    let now = moment();
+    if(now > check_end_date){
+        console.log("yes")
+    }else{
+        console.log("no")
+    }
     useEffect(() => {
         setValue('title', state.title, {shouldValidate: true})
-        setValue('content', state.content, {shouldValidate: true})
-        setValue('category_id', state.category_id, {shouldValidate: true})
-        setValue('news_type_id', state.news_type_id, {shouldValidate: true})
+        setValue('target_audience', state.target_audience, {shouldValidate: true})
+        setValue('notes', state.notes, {shouldValidate: true})
+        setValue('phone', state.phone, {shouldValidate: true})
+        setValue('email', state.email, {shouldValidate: true})
+        setValue('location', state.location, {shouldValidate: true})
+        setValue('start_date', start_date, {shouldValidate: true})
+        setValue('end_date',end_date, {shouldValidate: true})
         // setValue('images', state.images, {shouldValidate: true})
-        console.log(state)
     }, [state])
-
-
-    useEffect(() => {
-        axios.get(process.env.REACT_APP_API_URL + "/api/users/news/get/categories_list").then((res) => {
-            setCategory(res.data.data)
-        })
-    }, [])
-    let category_element = [{value: '', option: 'Select an option'}]
-    if (category.length) {
-        category.map((item) => {
-            const data = {value: item.id, option: item.title}
-            category_element.push(data)
-        })
-    }
-    //news type
-    const [newsType, setNewsType] = useState([])
-    //
-    useEffect(() => {
-        axios.get(process.env.REACT_APP_API_URL + "/api/users/news/get/all_news_type").then((res) => {
-            setNewsType(res.data.data)
-        })
-    }, [])
-    let newsType_element = [{value: '', option: 'Select an option'}]
-    if (newsType.length) {
-        newsType.map((item) => {
-            const data = {value: item.id, option: item.title}
-            newsType_element.push(data)
-        })
-    }
     //multiple image
+
     const [multipleImages, setMultipleImages] = useState([]);
     const changeMultipleFiles = (e) => {
         if (e.target.files) {
@@ -104,11 +86,11 @@ const EditEvent = () => {
         formData.append("content", data.content)
         formData.append("news_type_id", data.news_type_id)
         formData.append("title", data.title)
-        axios.post(process.env.REACT_APP_API_URL + "/api/admin/news/update", formData, config).then((res) => {
-            if (res.data.status === 200) {
-                navigate("/news")
-            }
-        });
+        // axios.post(process.env.REACT_APP_API_URL + "/api/admin/event/update", formData, config).then((res) => {
+        //     if (res.data.status === 200) {
+        //         navigate("/news")
+        //     }
+        // });
     }
     return (
         <div className={`container`}>
@@ -123,72 +105,128 @@ const EditEvent = () => {
                                     <Controller
                                         name="title"
                                         control={control}
-                                        rules={{required: "This field is required"}}
-                                        render={({field: {value, onChange}}) => (
-                                            <input value={value ?? ""} onChange={onChange} type="text"
-                                                   className={`form-control`}/>
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <input value={value ?? ""} onChange={onChange} type="text" className={`form-control`}/>
                                         )}
                                     />
                                     <small className={`text-danger mt-2`}>{errors?.title?.message}</small>
                                 </div>
                                 <div className="form-group mb-3">
-                                    <label htmlFor="content" className={`mb-2`}>Content</label>
+                                    <label htmlFor="content" className={`mb-2`}>Who Should Attend</label>
                                     <Controller
-                                        name="content"
+                                        name="target_audience"
                                         control={control}
-                                        rules={{required: "This field is required"}}
-                                        render={({field: {value, onChange}}) => (
-                                            <textarea value={value} onChange={onChange} className={`form-control`}
-                                                      name="" id="" cols="30" rows="10"></textarea>
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <textarea value={value} onChange={onChange} className={`form-control`} name="" id="" cols="30" rows="10"></textarea>
                                         )}
                                     />
-                                    <small className={`text-danger mt-2`}>{errors?.content?.message}</small>
+                                    <small className={`text-danger mt-2`}>{errors?.target_audience?.message}</small>
                                 </div>
-                                {/*category*/}
-                                <div className={`mb-3`}>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="notes" className={`mb-2`}>Note The Followings</label>
                                     <Controller
-                                        rules={{
-                                            required: 'Please select an option',
-                                        }}
+                                        name="notes"
                                         control={control}
-                                        name={`category_id`}
-                                        render={({field: {onChange, value, ref}}) => (
-                                            <Select
-                                                options={category_element}
-                                                label={"Category"}
-                                                value={value ?? ''}
-                                                onChange={onChange}
-                                                error={errors.category_id?.message}
-                                            />
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <textarea value={value} onChange={onChange} className={`form-control`} name="" id="" cols="30" rows="10"></textarea>
                                         )}
                                     />
+                                    <small className={`text-danger mt-2`}>{errors?.notes?.message}</small>
                                 </div>
-                                {/*news type*/}
-                                {/*category*/}
-                                <div className={`mb-3`}>
+                                {/*phone*/}
+                                <div className="form-group mb-3">
+                                    <label htmlFor="phone" className={`mb-2`}>Phone</label>
                                     <Controller
-                                        rules={{
-                                            required: 'Please select an option',
-                                        }}
+                                        name="phone"
                                         control={control}
-                                        name={`news_type_id`}
-                                        render={({field: {onChange, value, ref}}) => (
-                                            <Select
-                                                options={newsType_element}
-                                                label={"News Type"}
-                                                value={value ?? ''}
-                                                onChange={onChange}
-                                                error={errors.news_type_id?.message}
-                                            />
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <input id={`phone`} value={value ?? ""} onChange={(e)=>{
+                                                onChange(e);
+                                                // handlePhone(e);
+                                            }} type="text" className={`form-control`}/>
                                         )}
                                     />
+                                    <small className={`text-danger mt-2`}>{errors?.phone?.message}</small>
+                                </div>
+                                {/*email*/}
+                                <div className="form-group mb-3">
+                                    <label htmlFor="email" className={`mb-2`}>Email</label>
+                                    <Controller
+                                        name="email"
+                                        control={control}
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <input id={`email`} value={value ?? ""} onChange={(e)=>{
+                                                onChange(e);
+                                                // handlePhone(e);
+                                            }} type="email" className={`form-control`}/>
+                                        )}
+                                    />
+                                    <small className={`text-danger mt-2`}>{errors?.email?.message}</small>
+                                </div>
+                                {/*location*/}
+                                <div className="form-group mb-3">
+                                    <label htmlFor="location" className={`mb-2`}>Location</label>
+                                    <Controller
+                                        name="location"
+                                        control={control}
+                                        rules={{ required: "This field is required" }}
+                                        render={({ field: {value,onChange} }) => (
+                                            <input id={`location`} value={value ?? ""} onChange={(e)=>{
+                                                onChange(e);
+                                                // handlePhone(e);
+                                            }} type="text" className={`form-control`}/>
+                                        )}
+                                    />
+                                    <small className={`text-danger mt-2`}>{errors?.location?.message}</small>
+                                </div>
+                                {/*Start Date*/}
+                                <div className="row">
+                                    <div className="col-lg-6 col-md-12">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="start_date" className={`mb-2`}>Start Date</label>
+                                            <Controller
+                                                name="start_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: {value,onChange} }) => (
+                                                    <input  asp-format="{0:yyyy-MM-dd}" disabled={now > check_start_date ?? true} min={ new Date().toISOString().split('T')[0]} id={`start_date`} value={value ?? ""} onChange={(e)=>{
+                                                        onChange(e);
+                                                        // handlePhone(e);
+                                                    }} type="date" className={`form-control`}/>
+                                                )}
+                                            />
+                                            <small className={`text-danger mt-2`}>{errors?.start_date?.message}</small>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-6 col-md-12">
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="end_date" className={`mb-2`}>End Date</label>
+                                            <Controller
+                                                name="end_date"
+                                                control={control}
+                                                rules={{ required: "This field is required" }}
+                                                render={({ field: {value,onChange} }) => (
+                                                    <input disabled={now > check_end_date ?? true} min={new Date().toISOString().split('T')[0]} id={`end_date`} value={value ?? ""} onChange={(e)=>{
+                                                        onChange(e);
+                                                        // handlePhone(e);
+                                                    }} type="date" className={`form-control`}/>
+                                                )}
+                                            />
+                                            <small className={`text-danger mt-2`}>{errors?.end_date?.message}</small>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className={`mb-3`}>
                                     <input
                                         type="file"
                                         name="images"
                                         multiple
-                                        {...register('images')}
+                                        {...register('images', { required: false })}
                                         onChange={changeMultipleFiles}
                                     />
                                     <small className={`d-block text-danger mt-2`}>{errors?.images?.message}</small>
@@ -197,8 +235,9 @@ const EditEvent = () => {
                                         {renderOldImage}
                                     </div>
                                 </div>
-                                <button type={`submit`} className={`btn btn-primary`}>Update</button>
+                                <button type={`submit`} className={`btn btn-primary`}>Submit</button>
                             </form>
+
                         </div>
                     </div>
                 </div>
