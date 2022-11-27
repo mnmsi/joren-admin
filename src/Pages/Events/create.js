@@ -34,7 +34,7 @@ const EventCreate = () => {
 
      const onsubmit = (data) => {
 
-         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdlb3NjaWVuY2Uub3JnIiwicm9sZV9pZCI6MSwibmFtZSI6IkFkbWluIiwiaWF0IjoxNjY5MjYyMjQzfQ.3yHmwnI0yJZtC9fEKLhpPxYDqArOF1GGw_Ig0gL8ex4"
+         let token = localStorage.getItem("joren_token") ?? null;
          const config = {
              headers: { Authorization: `Bearer ${token}` }
          };
@@ -52,12 +52,11 @@ const EventCreate = () => {
          formData.append("location",data.location)
          formData.append("start_date",data.start_date)
          formData.append("end_date",data.start_date)
-         // axios.post(process.env.REACT_APP_API_URL+"/api/admin/event/add",formData,config).then((res)=>{
-         //     if(res.data.status === 200){
-         //         navigate("/events")
-         //     }
-         // });
-         console.log(data);
+         axios.post(process.env.REACT_APP_API_URL+"/api/admin/event/add",formData,config).then((res)=>{
+             if(res.data.status === 200){
+                 navigate("/events")
+             }
+         });
      }
     return (
         <div className={`container mb-5`}>

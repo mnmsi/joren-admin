@@ -8,11 +8,20 @@ import EventIndex from "../Pages/Events";
 import EventCreate from "../Pages/Events/create";
 import EventDetails from "../Pages/Events/details";
 import EditEvent from "../Pages/Events/edit";
+import {useLocation,useNavigate} from "react-router";
 const PrivateRoute = () => {
+    const location = useLocation();
+    const history = useNavigate()
+    console.log(location.pathname)
+    let navigate = null;
+    if(location.pathname == "/login"){
+        navigate = history("/")
+    }
     return (
         <Routes>
             {/*News*/}
-            <Route path="/" element={<NewsIndex/>}/>
+            {navigate}
+            <Route index path="/" element={<NewsIndex/>}/>
             <Route path="/news" element={<NewsIndex/>}/>
             <Route path="/news/create" element={<NewsCreate/>}/>
             <Route path="/news/details" element={<NewsDetails/>}/>
@@ -23,6 +32,7 @@ const PrivateRoute = () => {
             <Route path="/event/create" element={<EventCreate/>}/>
             <Route path="/event/details" element={<EventDetails/>}/>
             <Route path="/event/edit/" element={<EditEvent/>}/>
+            <Route path="*" element="" />
 
         </Routes>
     );

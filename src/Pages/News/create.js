@@ -62,7 +62,7 @@ const NewsCreate = () => {
 
      const onsubmit = (data) => {
 
-         let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdlb3NjaWVuY2Uub3JnIiwicm9sZV9pZCI6MSwibmFtZSI6IkFkbWluIiwiaWF0IjoxNjY5MjYyMjQzfQ.3yHmwnI0yJZtC9fEKLhpPxYDqArOF1GGw_Ig0gL8ex4"
+         let token = localStorage.getItem("joren_token") ?? null;
          const config = {
              headers: { Authorization: `Bearer ${token}` }
          };
