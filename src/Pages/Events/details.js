@@ -4,8 +4,9 @@ import Carousel from 'react-bootstrap/Carousel';
 import defaultImage from "../../Assets/Images/default-image.jpg"
 import {useNavigate} from "react-router";
 import axios from "axios";
-
+import { toast } from 'react-toastify';
 const EventDetails = () => {
+    const notify = () => toast.success("Success!");
     const {state} = useLocation()
     const navigate = useNavigate()
     let data = state[0];
@@ -51,7 +52,7 @@ const EventDetails = () => {
     //handle delete
 
     const handleDelete = () => {
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdlb3NjaWVuY2Uub3JnIiwicm9sZV9pZCI6MSwibmFtZSI6IkFkbWluIiwiaWF0IjoxNjY5MjYyMjQzfQ.3yHmwnI0yJZtC9fEKLhpPxYDqArOF1GGw_Ig0gL8ex4"
+        let token = localStorage.getItem("joren_token") ?? null;
         const config = {
             headers: {Authorization: `Bearer ${token}`}
         };
@@ -62,6 +63,7 @@ const EventDetails = () => {
         axios.post(process.env.REACT_APP_API_URL + "/api/admin/event/remove", bodyParameters, config).then((res) => {
             if (res.data.status === 200) {
                 navigate("/news")
+                notify();
             }
         });
     }

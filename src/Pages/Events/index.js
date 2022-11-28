@@ -5,14 +5,22 @@ import NewsCard from "../../Components/Card/Card";
 import NotFound from "../../Components/NotFound/NotFound";
 import EventCard from "../../Components/Card/EventCard";
 import {useNavigate} from "react-router";
+import Pagination from "../../Components/Pagination/Pagination";
 const EventIndex = () => {
     const navigate = useNavigate();
     let baseUrl = process.env.REACT_APP_API_URL;
     let [event,setEvent] = useState([])
+    let [load,setLoad]  = useState(true);
+    let [pagination,setPagination] = useState(0);
     useEffect(()=>{
-        axios.get(baseUrl+"/api/users/events/get/lists?&page=0&size=20").then(res=>{
-            // console.log(res.data.data.rows)
-            setEvent(res.data.data.rows)
+        axios.get(baseUrl+"/api/users/events/get/lists?&page=0&size=9").then(res=>{
+            if(res.data){
+                window.scroll({top:0})
+                setLoad(false);
+                setPagination(res.data?.data?.totalPages)
+                setEvent(res.data?.data?.data?.rows)
+            }
+
         })
     },[])
     //single news functionality
@@ -21,9 +29,9 @@ const EventIndex = () => {
        let singleData = event?.filter(event => event.id === id);
         navigate('/event/details',{state:singleData})
     }
-    let renderNews = <div className={`d-flex justify-content-center align-items-center`}> <Spinner /></div>
+    let renderEvents = <div className={`d-flex justify-content-center align-items-center`}> <Spinner /></div>
     if(event?.length){
-        renderNews = event?.map((item,index)=>{
+        renderEvents = event?.map((item,index)=>{
            return (
                <div className={`col-lg-4 mb-4`} key={index}>
                    <EventCard banner={item.banner[0]} title={item.title} location={item.location} start_date={item.start_date} end_date={item.end_date} handleClick={()=>handleEvents(item.id)}/>
@@ -33,11 +41,22 @@ const EventIndex = () => {
            )
         })
     }
-
+    //handle page click
+    const PaginationClick = (e) => {
+        // setCount(e.selected);
+        axios.get(baseUrl+`/api/users/events/get/lists?page=${e.selected}&size=9`).then(res=>{
+            if(res.data){
+                window.scroll({top:0})
+            }
+            setEvent(res.data?.data?.data?.rows)
+            setPagination(res.data?.data?.totalPages)
+        })
+    }
     return (
         <div className={`container`}>
             <div className="row">
-                {renderNews ? renderNews : <NotFound text={`No Data Found`} />}
+                {renderEvents ? renderEvents : <NotFound text={`No Data Found`} />}
+                {!load && <Pagination pageFirstShow={0}   handlePageClick={(e) => PaginationClick(e)} pageCount={pagination} />}
             </div>
         </div>
     );

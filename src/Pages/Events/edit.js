@@ -6,7 +6,9 @@ import Select from "../../Components/UI/Select";
 import {useNavigate} from "react-router";
 import {useLocation} from "react-router";
 import moment from "moment";
+import {toast} from "react-toastify";
 const EditEvent = () => {
+    const notify = () => toast.success("Success!");
     const navigate = useNavigate()
     const {state} = useLocation()
     const {handleSubmit, reset, setValue, setError, control, formState: {errors}, register} = useForm({mode: "all"});
@@ -19,11 +21,6 @@ const EditEvent = () => {
     let check_end_date = moment(end_date)
     let check_start_date = moment(start_date)
     let now = moment();
-    if(now > check_end_date){
-        console.log("yes")
-    }else{
-        console.log("no")
-    }
     useEffect(() => {
         setValue('title', state.title, {shouldValidate: true})
         setValue('target_audience', state.target_audience, {shouldValidate: true})
@@ -72,7 +69,7 @@ const EditEvent = () => {
 
     const onsubmit = (data) => {
         console.log(data)
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdlb3NjaWVuY2Uub3JnIiwicm9sZV9pZCI6MSwibmFtZSI6IkFkbWluIiwiaWF0IjoxNjY5MjYyMjQzfQ.3yHmwnI0yJZtC9fEKLhpPxYDqArOF1GGw_Ig0gL8ex4"
+        let token = localStorage.getItem("joren_token") ?? null;
         const config = {
             headers: {Authorization: `Bearer ${token}`}
         };
@@ -86,18 +83,19 @@ const EditEvent = () => {
         formData.append("content", data.content)
         formData.append("news_type_id", data.news_type_id)
         formData.append("title", data.title)
-        // axios.post(process.env.REACT_APP_API_URL + "/api/admin/event/update", formData, config).then((res) => {
-        //     if (res.data.status === 200) {
-        //         navigate("/news")
-        //     }
-        // });
+        axios.post(process.env.REACT_APP_API_URL + "/api/admin/event/update", formData, config).then((res) => {
+            if (res.data.status === 200) {
+                notify();
+                navigate("/events")
+            }
+        });
     }
     return (
         <div className={`container`}>
             <div className={`row justify-content-center`}>
                 <div className={`col-lg-6 col-12`}>
                     <div className={`card`}>
-                        <div className={`card-title p-4 text-center`} style={{fontSize: "35px"}}>Edit News</div>
+                        <div className={`card-title p-4 text-center`} style={{fontSize: "35px"}}>Edit Event</div>
                         <div className={`card-body`}>
                             <form action="" onSubmit={handleSubmit(onsubmit)}>
                                 <div className="form-group mb-3">
@@ -142,9 +140,14 @@ const EditEvent = () => {
                                     <Controller
                                         name="phone"
                                         control={control}
-                                        rules={{ required: "This field is required" }}
-                                        render={({ field: {value,onChange} }) => (
-                                            <input id={`phone`} value={value ?? ""} onChange={(e)=>{
+                                        rules={{
+                                            required: "This field is required", pattern: {
+                                                value: /^[+#*\(\)\[\]]*([0-9][ ext+-pw#*\(\)\[\]]*){6,45}$/,
+                                                message: "Phone number not valid"
+                                            }
+                                        }}
+                                        render={({field: {value, onChange}}) => (
+                                            <input id={`phone`} value={value ?? ""} onChange={(e) => {
                                                 onChange(e);
                                                 // handlePhone(e);
                                             }} type="text" className={`form-control`}/>
@@ -152,18 +155,30 @@ const EditEvent = () => {
                                     />
                                     <small className={`text-danger mt-2`}>{errors?.phone?.message}</small>
                                 </div>
-                                {/*email*/}
                                 <div className="form-group mb-3">
                                     <label htmlFor="email" className={`mb-2`}>Email</label>
                                     <Controller
-                                        name="email"
                                         control={control}
-                                        rules={{ required: "This field is required" }}
-                                        render={({ field: {value,onChange} }) => (
-                                            <input id={`email`} value={value ?? ""} onChange={(e)=>{
-                                                onChange(e);
-                                                // handlePhone(e);
-                                            }} type="email" className={`form-control`}/>
+                                        name="email"
+                                        rules={{
+                                            required: "This field is required",
+                                            pattern: {
+                                                value:
+                                                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                                                message: "Email not valid",
+                                            },
+                                        }}
+                                        render={({field}) => (
+                                            <input
+                                                {...field}
+                                                id="email"
+                                                // onChange={onChange}
+                                                // // ref={ref}
+                                                value={field.value ?? ''}
+                                                type="email"
+                                                className={`form-control`}
+                                                placeholder="Email address"
+                                            />
                                         )}
                                     />
                                     <small className={`text-danger mt-2`}>{errors?.email?.message}</small>
@@ -194,7 +209,7 @@ const EditEvent = () => {
                                                 control={control}
                                                 rules={{ required: "This field is required" }}
                                                 render={({ field: {value,onChange} }) => (
-                                                    <input  asp-format="{0:yyyy-MM-dd}" disabled={now > check_start_date ?? true} min={ new Date().toISOString().split('T')[0]} id={`start_date`} value={value ?? ""} onChange={(e)=>{
+                                                    <input  asp-format="{0:yyyy-MM-dd}" disabled={now <= check_start_date ?? true} min={ new Date().toISOString().split('T')[0]} id={`start_date`} value={value ?? ""} onChange={(e)=>{
                                                         onChange(e);
                                                         // handlePhone(e);
                                                     }} type="date" className={`form-control`}/>
@@ -211,7 +226,7 @@ const EditEvent = () => {
                                                 control={control}
                                                 rules={{ required: "This field is required" }}
                                                 render={({ field: {value,onChange} }) => (
-                                                    <input disabled={now > check_end_date ?? true} min={new Date().toISOString().split('T')[0]} id={`end_date`} value={value ?? ""} onChange={(e)=>{
+                                                    <input disabled={now <= check_end_date ?? true} min={new Date().toISOString().split('T')[0]} id={`end_date`} value={value ?? ""} onChange={(e)=>{
                                                         onChange(e);
                                                         // handlePhone(e);
                                                     }} type="date" className={`form-control`}/>

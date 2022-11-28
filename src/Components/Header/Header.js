@@ -5,8 +5,10 @@ import Container from 'react-bootstrap/Container';
 import {useNavigate} from "react-router";
 import {Link} from "react-router-dom";
 import axios from "axios";
+import { toast } from 'react-toastify';
 const Header = () => {
     const navigate = useNavigate()
+    const notify = () => toast.success("Success!");
     let isAuth = localStorage.getItem("joren_token") ?? null;
     const handleLogout = () => {
         const config = {
@@ -16,6 +18,7 @@ const Header = () => {
             if (res.data.status){
                 localStorage.removeItem("joren_token");
                 navigate("/login");
+                notify()
                 window.location.reload();
             }
         })

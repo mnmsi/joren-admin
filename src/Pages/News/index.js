@@ -5,20 +5,22 @@ import NewsCard from "../../Components/Card/Card";
 import NotFound from "../../Components/NotFound/NotFound";
 import {useNavigate} from "react-router";
 import Pagination from "../../Components/Pagination/Pagination";
+
 const NewsIndex = () => {
+
     const navigate = useNavigate();
     let baseUrl = process.env.REACT_APP_API_URL;
     let [news,setNews] = useState([])
     let [pagination,setPagination] = useState(0);
     let [load,setLoad]  = useState(true);
     useEffect(()=>{
+        window.scroll({top:0})
         axios.get(baseUrl+`/api/users/news/get?page=${0}&size=9`).then(res=>{
             if(res.data){
                 setLoad(false);
+                setNews(res.data?.data?.data?.rows)
+                setPagination(res.data?.data?.totalPages)
             }
-            setNews(res.data?.data?.data?.rows)
-
-            setPagination(res.data?.data?.totalPages)
         })
     },[])
     //single news functionality
@@ -32,7 +34,9 @@ const NewsIndex = () => {
     const PaginationClick = (e) => {
         // setCount(e.selected);
         axios.get(baseUrl+`/api/users/news/get?page=${e.selected}&size=9`).then(res=>{
-            console.log(res)
+            if(res.data){
+                window.scroll({top:0})
+            }
             setNews(res.data?.data?.data?.rows)
             setPagination(res.data?.data?.totalPages)
         })

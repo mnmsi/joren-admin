@@ -3,7 +3,9 @@ import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import {Alert} from "react-bootstrap";
 import {useNavigate} from "react-router";
+import {toast} from "react-toastify";
 const Login = () => {
+    const notify = () => toast.success("Success!");
     const navigate = useNavigate()
     const [is_error,set_error] = useState(false)
     const {
@@ -23,10 +25,10 @@ const Login = () => {
             if(res.data.status){
                 localStorage.setItem("joren_token",res.data?.accessToken)
                 set_error(false)
+                notify()
                 navigate("/news")
                 window.location.reload();
             }
-
         }).catch((err)=>{
             if(err.response.data){
                 set_error(true)
@@ -76,7 +78,6 @@ const Login = () => {
                                             )}
                                         />
                                         <small className={`text-danger mt-2`}>{errors?.email?.message}</small>
-
                                     </div>
                                     <div className={`mb-4`}>
                                         <Controller

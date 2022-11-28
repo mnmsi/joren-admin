@@ -4,7 +4,9 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { useForm, Controller } from "react-hook-form";
 import Select from "../../Components/UI/Select";
 import {useNavigate} from "react-router";
+import {toast} from "react-toastify";
 const NewsCreate = () => {
+    const notify = () => toast.success("Success!");
     const navigate = useNavigate()
     const { handleSubmit, reset, setValue,setError ,control,formState:{errors},register } = useForm({ mode:"all" });
     //category
@@ -80,6 +82,7 @@ const NewsCreate = () => {
          axios.post(process.env.REACT_APP_API_URL+"/api/admin/add_news",formData,config).then((res)=>{
              if(res.data.status === 200){
                  navigate("/news")
+                 notify()
              }
          });
      }
