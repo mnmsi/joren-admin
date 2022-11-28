@@ -9,6 +9,7 @@ import EventCreate from "../Pages/Events/create";
 import EventDetails from "../Pages/Events/details";
 import EditEvent from "../Pages/Events/edit";
 import {useLocation,useNavigate} from "react-router";
+import EventParticipants from "../Pages/Events/eventParticipants";
 const PrivateRoute = () => {
     const location = useLocation();
     const history = useNavigate()
@@ -32,6 +33,7 @@ const PrivateRoute = () => {
             <Route path="/event/create" element={<EventCreate/>}/>
             <Route path="/event/details" element={<EventDetails/>}/>
             <Route path="/event/edit/" element={<EditEvent/>}/>
+            <Route path="/event/participants" element={<EventParticipants/>}/>
             <Route path="*" element="" />
 
         </Routes>

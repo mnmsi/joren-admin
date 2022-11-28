@@ -66,12 +66,18 @@ const EventDetails = () => {
         });
     }
 
-    //handleDelete
+    //handleEdit
 
     const handleEdit = () => {
         navigate("/event/edit/", {
             state: data,
         })
+    }
+
+    //Handle Participants
+
+    const HandleParticipant = () => {
+        navigate("/event/participants",{state:data.id})
     }
 
     return (
@@ -83,6 +89,7 @@ const EventDetails = () => {
                         <div className={`d-flex gap-2`}>
                             <div className={`btn btn-success`} style={{cursor: "auto"}}>  {data.start_date}</div>
                             <div className={`btn btn-danger`} style={{cursor: "auto"}}> {data?.end_date}</div>
+                            <div className={`btn btn-primary`} style={{cursor: "pointer"}} onClick={HandleParticipant}>View Participants</div>
                         </div>
                         <div className={`d-flex gap-2`}>
                             <button onClick={handleEdit} type="button" className="btn btn-outline-primary details_btn"

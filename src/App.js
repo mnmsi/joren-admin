@@ -9,7 +9,7 @@ function App() {
         let token = localStorage.getItem("joren_token") ?? null
         if(token){
             setAuth(true)
-            navigate("/")
+            // navigate("/")
         }else{
             setAuth(false)
             navigate("/login")
